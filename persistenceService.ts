@@ -5,6 +5,22 @@ const PROFILES_KEY = 'velvet_ai_profiles';
 const USER_PROFILE_KEY = 'velvet_user_profile';
 const CHAT_PREFIX = 'velvet_ai_chat_';
 
+// Utility: Generate UUID with fallback for non-secure contexts
+export const generateId = (): string => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    try {
+      return crypto.randomUUID();
+    } catch (e) {
+      // Fallback if crypto exists but randomUUID fails (rare context issue)
+    }
+  }
+  // Timestamp + Random fallback
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 // --- Character Profiles ---
 
 export const getAllProfiles = (): CharacterProfile[] => {
@@ -105,7 +121,7 @@ export const checkAndMigrate = () => {
        try {
            const parsed = JSON.parse(oldSession);
            if (parsed.profile) {
-               const newProfile = { ...parsed.profile, id: crypto.randomUUID(), createdAt: Date.now() };
+               const newProfile = { ...parsed.profile, id: generateId(), createdAt: Date.now() };
                saveProfile(newProfile);
                if (parsed.messages) {
                    saveChatHistory(newProfile.id, parsed.messages);

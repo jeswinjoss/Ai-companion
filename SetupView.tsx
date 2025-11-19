@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { CharacterProfile, RelationshipType } from '../types';
 import { Button } from '../components/Button';
 import { triggerHaptic } from '../utils/haptics';
+import { generateId } from '../services/persistenceService';
 
 interface SetupViewProps {
   onComplete: (profile: CharacterProfile) => void;
@@ -81,9 +82,9 @@ export const SetupView: React.FC<SetupViewProps> = ({
     
     const fullTraits = `${traits}${personalityStr}`;
 
-    // Use existing ID if editing, else generate new
+    // Use existing ID if editing, else generate new robust ID
     const newProfile: CharacterProfile = { 
-      id: initialProfile ? initialProfile.id : crypto.randomUUID(),
+      id: initialProfile ? initialProfile.id : generateId(),
       createdAt: initialProfile ? initialProfile.createdAt : Date.now(),
       name, 
       relationship: finalRel, 

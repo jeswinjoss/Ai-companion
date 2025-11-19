@@ -4,7 +4,9 @@ import { CharacterProfile, Message } from "../types";
 
 const getClient = () => {
   const apiKey = process.env.API_KEY;
-  if (!apiKey) console.error("API_KEY missing");
+  if (!apiKey) {
+    console.warn("API_KEY is missing in process.env. Ensure it is set in your environment configuration.");
+  }
   return new GoogleGenAI({ apiKey: apiKey || '' });
 };
 
